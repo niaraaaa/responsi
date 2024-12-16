@@ -1,0 +1,30 @@
+{
+    "type": "FeatureCollection",
+    "name": "Pasar",
+    "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::32749" } },
+    "features": [
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Bakulan", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.35183520677147, -7.908860303675761] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Bantul", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.33067325096195, -7.884811869775624] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Barongan", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.37223877794916, -7.912887759720848] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Celep", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.37247481234856, -7.913015279878867] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Gatak", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.32262797794611, -7.928192679463911] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Grogol", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.303275508649, -7.942102562978846] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Hewan Pandak", "Jenis": "Pasar Hewan" }, "geometry": { "type": "Point", "coordinates": [110.29638012216017, -7.90987825215092] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Imogiri", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.38303628863277, -7.912554344288519] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Jodog", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.3115766933204, -7.910317991838025] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Kepek", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.37467229329589, -7.933006193708712] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Mangiran", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.26367762213505, -7.972680821980197] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Ngangkruksari", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.31799851843218, -7.972680821980197] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Ngoto", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.37436112213337, -7.8522820941244555] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Pijenan", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.29746249516377, -7.899742751589182] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Piyungan", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.47102593563068, -7.8357425543535095] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Pleret", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.40670656260386, -7.865806647022364] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Pundong", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.34653196447861, -7.955389088389637] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Hewan Bakulan", "Jenis": "Pasar Hewan" }, "geometry": { "type": "Point", "coordinates": [110.3522995875062, -7.90403016346612] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Unggas Bantul", "Jenis": "Pasar Hewan" }, "geometry": { "type": "Point", "coordinates": [110.32849403562513, -7.884790797164024] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Sorobayan", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.25767800678933, -7.970487195484962] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Turi", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.31055787797234, -7.966394168810463] } },
+      { "type": "Feature", "properties": { "Nama_pasar": "Pasar Niten", "Jenis": "Pasar Kebutuhan Pokok" }, "geometry": { "type": "Point", "coordinates": [110.34979925283296, -7.839922686407635] } }
+    ]
+  }
+  

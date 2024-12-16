@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebGIS Persebaran Pasar di Kabupaten Bantul</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-search@2.0.0/dist/leaflet-search.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="plugin/leaflet-search-master/dist/leaflet-search.min.css">
+    <link rel="stylesheet"
+        href="plugin/Leaflet.defaultextent-master/Leaflet.defaultextent-master/dist/leaflet.defaultextent.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+        }
+
+        #map {
+            height: 600px;
+            width: 1470px;
+            margin-left: 25px;
+            margin-right: 20px;
+            margin-top: 40px;
+        }
+
+        #pembuat {
+            display: none;
+            transition: 0.5s ease;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: rgba(216, 202, 159, 0.8);
+        }
+
+        .home-content-box {
+            background: rgba(103, 97, 78, 0.8);
+            /* Transparansi 80% */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Mengatur Background Video */
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Memastikan video menutupi seluruh area */
+            z-index: -1;
+            /* Menempatkan video di belakang konten */
+        }
+
+        .home-content {
+            padding: 100px;
+            display: flex;
+            justify-content: center;
+            /* Horizontal di tengah */
+            height: 100vh;
+            text-align: center;
+            /* Mengisi seluruh tinggi viewport */
+        }
+
+        body {
+            background: url('icon/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            /* Membuat gambar menutupi seluruh halaman */
+        }
+
+
+        /* Judul Home */
+        .home-content h1 {
+            color: #fff;
+            /* Judul berwarna putih */
+            font-weight: bold;
+        }
+
+        /* Mengatur navbar dengan gradasi */
+        .navbar {
+            background: linear-gradient(95deg, rgba(103, 97, 78, 0.8),rgba(218, 206, 169, 0.8));
+        }
+
+        .navbar .nav-link {
+            color: #000 !important;
+            /* Warna teks navbar */
+        }
+
+        .navbar .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        .container.rounded.shadow {
+            background-color: rgba(171, 164, 140, 0.8);;
+            /* Warna latar belakang */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            /* Shadow */
+            border-radius: 15px;
+            /* Rounded */
+        }
+
+        .col-md-4 {
+            background-color: rgba(171, 164, 140, 0.8);;
+            /* Warna latar belakang */
+        }
+        
+        .card{
+            background-color: rgba(216, 202, 159, 0.8);;
+            /* Warna latar belakang */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            /* Shadow */
+            border-radius: 15px;
+            /* Rounded */
+        }
+
+        .p-4.rounded.shadow.mb-5 {
+            background-color: rgba(171, 164, 140, 0.8);
+            /* Warna putih transparan 80% */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            /* Shadow */
+            border-radius: 15px;
+            /* Efek rounded */
+        }
+
+
+        /* Deskripsi Home */
+        .home-content p {
+            color: #fff;
+            /* Deskripsi berwarna putih */
+            font-weight: 500;
+        }
+
+        .btn-style {
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-style:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg ">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fa-solid fa-map-location-dot"></i>  Jelajah Pasar</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" id="nav-home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" id="nav-deskripsi">Detail Informasi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="nav-map">Peta</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="table.php" id="nav-map">Kritik dan Saran</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" id="nav-pembuat">Pembuat</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Konten Home -->
+    <div id="home" class="home-content mt-5">
+        <div class="container mt-5">
+            <div class="p-4 rounded bg-lightshadow mb-5 home-content-box">
+                <h1 class="fw-bold">Jelajah Pasar</h1>
+                <p class="fs-5 text-light">Dapatkan info Sebaran Pasar di Wilayah Kabupaten Bantul dengan Mudah, Cepat,
+                    dan Tepat</p>
+                <video autoplay muted loop id="bg-video">
+                    <source src="icon/Bantul.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="mt-4 text-center">
+                <button id="btn-go-deskripsi" class="btn btn-lg mt-3"
+                    style="background: rgba(103, 97, 78, 0.8); color: #fff; border: none;">
+                    Detail Informasi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Konten Deskripsi -->
+    <div id="deskripsi" class="deskripsi-content mt-5" style="display:none;">
+        <div class="container mt-5">
+
+            <!-- Bagian Deskripsi -->
+            <div class="p-4 rounded shadow mb-5">
+                <h4 class="fw-bold">Deskripsi</h4>
+                <p class="text-muted mt-2">
+                    Pada era digital saat ini, akses informasi menjadi kebutuhan utama masyarakat. Kabupaten Bantul,
+                    sebagai salah
+                    satu wilayah dengan aktivitas ekonomi yang dinamis memiliki banyak pasar tradisional dan modern yang
+                    menjadi
+                    pusat perdagangan utama. Namun, persebaran pasar yang beragam seringkali menimbulkan kesulitan bagi
+                    masyarakat
+                    dalam menemukan pasar yang sesuai kebutuhan, terutama bagi mereka yang mencari lokasi terdekat atau
+                    pasar
+                    dengan komoditas tertentu.
+                </p>
+                <p class="text-muted mt-2">
+                    WebGIS Jelajah Pasar hadir sebagai solusi inovatif untuk mengatasi tantangan ini. Platform ini
+                    dirancang untuk
+                    membantu masyarakat Kabupaten Bantul mengakses informasi pasar secara digital dan real-time. Fitur
+                    peta yang
+                    interaktif tentu memudahkan masyarakat dalam menemukan pasar terdekat berdasarkan lokasi mereka,
+                    melihat
+                    informasi detail mengenai jenis komoditas dan jadwal operasional, serta merencanakan kunjungan ke
+                    pasar dengan
+                    aksesibilitas yang lebih efisien.
+                </p>
+                <p class="text-muted mt-2">
+                    Tidak hanya bagi konsumen, Jelajah Pasar juga memberikan manfaat bagi pedagang untuk memahami pola
+                    distribusi
+                    pasar, mengeksplor peluang bisnis baru, dan meningkatkan visibilitas pasar mereka di kalangan
+                    masyarakat luas.
+                    Dengan memanfaatkan teknologi Geographic Information System (GIS), platform ini menyajikan data yang
+                    akurat
+                    dan mudah diakses melalui perangkat digital seperti smartphone atau komputer.
+                </p>
+                <p class="text-muted mt-2">
+                    Pengembangan WebGIS Jelajah Pasar diharapkan dapat memperkuat konektivitas antara masyarakat dengan
+                    pasar
+                    lokal, mendukung pengembangan ekonomi yang lebih inklusif, serta mendorong Kabupaten Bantul menuju
+                    ekosistem
+                    perdagangan berbasis digital yang modern, efisien, dan berkelanjutan.
+                </p>
+            </div>
+
+            <!-- Carousel Slide dengan 3 Card per Slide -->
+            <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+                <div class="p-4 rounded shadow mb-5">
+                    <h3 class="fw-bold">Pasar Populer di Wilayah Kabupaten Bantul</h3>
+                    <div class="carousel-inner">
+                        <!-- Slide 1 -->
+                        <div class="carousel-item active">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <img src="icon/pasar_bantul.jpeg" class="card-img-top" sizes="25px"
+                                            alt="Pasar Bantul">
+                                        <div class="card-body">
+                                            <h5>Pasar Bantul</h5>
+                                            <p>Pasar kebutuhan pokok</p>
+                                            <p>Alamat: Jl. Jend. Sudirman No.108, Kurahan, Bantul, Kec. Bantul,
+                                                Kabupaten Bantul, Daerah Istimewa Yogyakarta 55711</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <img src="icon/pasar_bakulan.png" class="card-img-top" sizes="25px"
+                                            alt="Pasar Bakulan">
+                                        <div class="card-body">
+                                            <h5>Pasar Bakulan</h5>
+                                            <p>Pasar kebutuhan pokok</p>
+                                            <p>Jl. Parangtritis No.184, Bakulan Wetan, Patalan, Kec. Jetis, Kabupaten
+                                                Bantul, Daerah Istimewa Yogyakarta 55781</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <img src="icon/pasar_barongan.jpg" class="card-img-top" sizes="25px"
+                                            alt="Pasar Barongan">
+                                        <div class="card-body">
+                                            <h5>Pasar Barongan</h5>
+                                            <p>Pasar kebutuhan pokok</p>
+                                            <p>Jl. Imogiri Barat, Barongan, Sumberagung, Kec. Jetis, Kabupaten Bantul,
+                                                Daerah Istimewa Yogyakarta 55781</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Slide 2 -->
+                        <div class="carousel-item">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <img src="icon/pasar_imogiri.png" class="card-img-top" alt="Pasar Imogiri">
+                                        <div class="card-body">
+                                            <h5>Pasar Imogiri</h5>
+                                            <p>Pasar kebutuhan pokok</p>
+                                            <p>Jl. Imogiri Tim. No.96, Dukuh, Wukirsari, Kec. Imogiri, Kabupaten Bantul,
+                                                Daerah Istimewa Yogyakarta 55782</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <img src="icon/pasar_hewanpandak.png" class="card-img-top"
+                                            alt="Pasar Hewan Pandak">
+                                        <div class="card-body">
+                                            <h5>Pasar Hewan Pandak</h5>
+                                            <p>Pasar hewan</p>
+                                            <p>Jl.Srandakan, Gedongsari, Wijirejo, Pandak, Bantul Regency, Special
+                                                Region of Yogyakarta 55761</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <img src="icon/pasar_pundong.png" class="card-img-top" alt="Pasar Pundong">
+                                        <div class="card-body">
+                                            <h5>Pasar Pundong</h5>
+                                            <p>Pasar kebutuhan pokok</p>
+                                            <p>Srihardono, Pundong, Srihardono, Kec. Bantul, Kabupaten Bantul, Daerah
+                                                Istimewa Yogyakarta 55771</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Slide 3 -->
+                        <div class="carousel-item">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <img src="icon/pasar_mangiran.jpg" class="card-img-top" alt="Pasar Mangiran">
+                                        <div class="card-body">
+                                            <h5>Pasar Mangiran</h5>
+                                            <p>Pasar kebutuhan pokok</p>
+                                            <p>Cagunan, Pedak, Trimurti, Kec. Srandakan, Kabupaten Bantul, Daerah
+                                                Istimewa Yogyakarta 55762</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <img src="icon/pasar_pleret.png" class="card-img-top" alt="Pasar Pleret">
+                                        <div class="card-body">
+                                            <h5>Pasar Pleret</h5>
+                                            <p>Pasar kebutuhan pokok</p>
+                                            <p>Kauman, Pleret, Kec. Pleret, Kabupaten Bantul, Daerah Istimewa Yogyakarta
+                                                55791</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <img src="icon/pasar_ngoto.png" class="card-img-top" alt="Pasar Ngoto">
+                                        <div class="card-body">
+                                            <h5>Pasar Ngoto</h5>
+                                            <p>Pasar kebutuhan pokok</p>
+                                            <p>Jl. Imogiri Barat No.56, Semail, Bangunharjo, Kec. Sewon, Kabupaten
+                                                Bantul, Daerah Istimewa Yogyakarta 55188</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Navigasi Carousel -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bagian Deskripsi -->
+            <div class="p-4 rounded shadow mb-5">
+                <h4 class="fw-bold">Detail Informasi Pasar</h4>
+                <table id="infoPasarTable">
+                    <thead>
+                        <tr>
+                            <th>Nama Pasar</th>
+                            <th>Jenis</th>
+                            <th>Hari Operasional</th>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                        </tr>
+                        <tr>
+                            <td>Pasar Celep</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Kliwon/Pon</td>
+                            <td>-7.968200479604512</td>
+                            <td>110.28913945548145</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Turi</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Pahing</td>
+                            <td>-7.96895842113609</td>
+                            <td>110.31065377312565</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Ngangkruksari</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Harian</td>
+                            <td>-7.972734879212737</td>
+                            <td>110.31815444177938</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Pundong</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Legi/Wage</td>
+                            <td>-7.954052088575909</td>
+                            <td>110.34580848155338</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Grogol</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Harian</td>
+                            <td>-7.938459431006205</td>
+                            <td>110.30322581121412</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Mangiran</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Wage/Pahing</td>
+                            <td>-7.931819761664484</td>
+                            <td>110.26443919716552</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Gatak</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Harian</td>
+                            <td>-7.921541250824499</td>
+                            <td>110.32327748089315</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Jodog</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Pon</td>
+                            <td>-7.906287238251883</td>
+                            <td>110.30970858540701</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Pijenan</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Harian</td>
+                            <td>-7.896073945108425</td>
+                            <td>110.29633191806708</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Bakulan</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Senin-Sabtu</td>
+                            <td>-7.9007665704693695</td>
+                            <td>110.34955990699287</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Barongan</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Harian</td>
+                            <td>-7.910375164450451</td>
+                            <td>110.3715685834172</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Imogiri</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Harian</td>
+                            <td>-7.913680155825018</td>
+                            <td>110.3819959435639</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Bantul</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Harian</td>
+                            <td>-7.883383410752109</td>
+                            <td>110.33055429777136</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Kepek</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Harian</td>
+                            <td>-7.877675525358398</td>
+                            <td>110.37459657818277</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Ngoto</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Harian</td>
+                            <td>-7.8487653337904835</td>
+                            <td>110.37440355580696</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Pleret</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Kliwon/Pon</td>
+                            <td>-7.862667913202087</td>
+                            <td>110.40715022311014</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Piyungan</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Harian</td>
+                            <td>-7.829433318955991</td>
+                            <td>110.46998973013119</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Hewan Pandak</td>
+                            <td>Pasar Hewan</td>
+                            <td>Pon/Legi</td>
+                            <td>-7.909493605260405</td>
+                            <td>110.29579181686067</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Niten</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Harian</td>
+                            <td>-7.839997086291066</td>
+                            <td>110.34983143933854</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Sorobayan</td>
+                            <td>Pasar Kebutuhan Pokok</td>
+                            <td>Kliwon/Pon</td>
+                            <td>-7.970519071069677</td>
+                            <td>110.2576672779497</td>
+                        </tr>
+                        <tr>
+                            <td>Pasar Unggas Bantul</td>
+                            <td>Pasar Hewan</td>
+                            <td>Harian</td>
+                            <td>-7.884812051975353</td>
+                            <td>110.32848330677976</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data akan dimuat secara dinamis -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-4 text-center">
+                <button id="btn-go-peta" class="btn btn-lg mt-3"
+                    style="background: rgba(103, 97, 78, 0.8); color: #fff; border: none;">
+                    Lihat Peta
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Konten Peta -->
+    <div id="map" style="display:none;"></div>
+    <!-- Bagian Informasi Pembuat -->
+    <div id="pembuat" class=" pembuat-content-box mt-0" style="display:none;">
+        <div class="container mt-5 p-5 rounded shadow">
+            <div class="text-center mb-4">
+                <img src="icon/profile.png" alt="Profil" class="rounded-circle img-fluid"
+                    style="width: 150px; height: 150px;">
+                <h2 class="mt-3"><strong>Nia Ramadani</strong></h2>
+            </div>
+
+            <div class="info-detail mt-3 text-center">
+                <p><strong>NIM:</strong> 23/516723/SV/22704</p>
+                <p><strong>Program Studi:</strong> Sistem Informasi Geografis</p>
+                <p><strong>Universitas:</strong> Universitas Gadjah Mada</p>
+                <p><strong>Angkatan:</strong> 2023</p>
+                <p><strong>Email:</strong> <a href="mailto:niaramadani@mail.ugm.ac.id">niaramadani@mail.ugm.ac.id</a>
+                </p>
+
+                <!-- Sosial Media -->
+                <div class="social-links mt-3">
+                    <a href="https://www.instagram.com/invites/contact/?igsh=1lfocrcry27qy&utm_content=6zr4c6o"
+                        target="_blank" class="btn btn-outline-dark mx-1">
+                        <i class="bi bi-instagram"></i> Instagram
+                    </a>
+                    <a href="https://github.com/niaraaaa" target="_blank" class="btn btn-outline-dark mx-1">
+                        <i class="bi bi-github"></i> GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Bootstrap Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-search@2.0.0/dist/leaflet-search.js"></script>
+
+    <script>
+        let map;
+        const kecamatanColors = {
+            "Kecamatan Bantul": "#eb7734",
+            "Kecamatan Jetis": "#00ff00",
+            "Kecamatan Srandakan": "#0000ff",
+            "Kecamatan Pandak": "#ffff00",
+            "Kecamatan Imogiri": "#ff00ff",
+            "Kecamatan Pleret": "#00ffff",
+            "Kecamatan Kasihan": "#ffa500",
+            "Kecamatan Sewon": "#8a2be2",
+            "Kecamatan Kretek": "#deb887",
+            "Kecamatan Sanden": "#5f9ea0",
+            "Kecamatan Banguntapan": "#7fff00",
+            "Kecamatan Pundong": "#d2691e",
+            "Kecamatan Dlingo": "#dc143c",
+            "Kecamatan Piyungan": "#00bfff",
+            "Kecamatan Sedayu": "#696969"
+        };
+
+        function initMap() {
+            map = L.map('map').setView([-7.89138857548217, 110.34456044744483], 11);
+
+            var basemap = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            var pasarLayer = L.geoJSON(null, {
+                pointToLayer: function (feature, latlng) {
+                    return L.marker(latlng).bindPopup(`<strong>${feature.properties.Nama_pasar}</strong><br>Koordinat: ${feature.geometry.coordinates}`);
+                }
+            });
+
+            var jalanLayer = L.geoJSON(null, {
+                style: { color: "red", weight: 3 }
+            });
+
+            var kecamatanLayer = L.geoJSON(null, {
+                style: function (feature) {
+                    var namaKec = feature.properties.Nama_Kec;
+                    var fillColor = kecamatanColors[namaKec] || "#808080";  // Warna default abu-abu jika tidak ditemukan.
+
+                    return {
+                        fillColor: fillColor,
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0.5
+                    };
+                }
+            });
+
+            $.getJSON("data/pasar.geojson", function (data) {
+                pasarLayer.addData(data);
+                map.addLayer(pasarLayer);
+            });
+
+            $.getJSON("data/jalan.geojson", function (data) {
+                jalanLayer.addData(data);
+                map.addLayer(jalanLayer);
+            });
+
+            $.getJSON("data/admin.geojson", function (data) {
+                kecamatanLayer.addData(data);
+                map.addLayer(kecamatanLayer);
+
+                addLegend();
+            });
+
+            var baseMaps = {
+                "OpenStreetMap": basemap
+            };
+
+            var overlayMaps = {
+                "Pasar": pasarLayer,
+                "Jalan": jalanLayer,
+                "Kecamatan": kecamatanLayer
+            };
+
+            L.control.layers(baseMaps, overlayMaps).addTo(map);
+        }
+
+        function addLegend() {
+            var legendControl = L.control({ position: 'bottomleft' });
+
+            legendControl.onAdd = function (map) {
+                var div = L.DomUtil.create('div', 'leaflet-control-legend');
+                div.innerHTML += `<strong>Legenda Kecamatan</strong><br>`;
+
+                for (var nama in kecamatanColors) {
+                    div.innerHTML += `
+        <div style="display: inline-flex; align-items: center; margin-top: 4px;">
+        <div style="width: 20px; height: 20px; background-color: ${kecamatanColors[nama]}; margin-right: 8px;"></div>
+        ${nama}
+      </div>`;
+                }
+
+                return div;
+            };
+
+            legendControl.addTo(map);
+        }
+
+        // Fungsi untuk menampilkan Informasi Pembuat
+        function tampilkanPembuat() {
+            document.getElementById('home').style.display = "none";
+            document.getElementById('deskripsi').style.display = "none";
+            document.getElementById('pembuat').style.display = "block";
+            document.getElementById('map').style.display = "none";
+        }
+
+        // Mengikat event listener untuk tombol navigasi ke bagian Pembuat
+        document.getElementById('btn-go-pembuat')?.addEventListener('click', tampilkanPembuat);
+
+
+        $(document).ready(function () {
+            $("#nav-home").click(function () {
+                $("#map").hide();
+                $("#deskripsi").hide();
+                $("#pembuat").hide();
+                $("#home").show();
+                $(this).addClass('active');
+                $("#nav-map").removeClass('active');
+                $("#nav-deskripsi").removeClass('active');
+                $("#nav-pembuat").removeClass('active');
+            });
+
+            $("#nav-map").click(function () {
+                $("#home").hide();
+                $("#deskripsi").hide();
+                $("#pembuat").hide();
+                $("#map").show();
+                initMap();
+            });
+
+            $("#nav-deskripsi").click(function () {
+                $("#home").hide();
+                $("#map").hide();
+                $("#pembuat").hide();
+                $("#deskripsi").show();
+                $(this).addClass('active');
+                $("#nav-home").removeClass('active');
+                $("#nav-map").removeClass('active');
+                $("#nav-pembuat").removeClass('active');
+            });
+
+            $("#nav-pembuat").click(function () {
+                $("#home").hide();
+                $("#map").hide();
+                $("#deskripsi").hide();
+                $("#pembuat").show();
+                $(this).addClass('active');
+                $("#nav-home").removeClass('active');
+                $("#nav-map").removeClass('active');
+                $("#nav-deskripsi").removeClass('active');
+            });
+
+
+            // Event untuk tombol di bawah Home
+            $("#btn-go-deskripsi").click(function () {
+                $("#home").hide();
+                $("#map").hide();
+                $("#deskripsi").show();
+                $("#nav-deskripsi").addClass('active');
+                $("#nav-home").removeClass('active');
+                $("#nav-map").removeClass('active');
+            });
+
+            $("#btn-go-peta").click(function () {
+                $("#home").hide();
+                $("#map").show();
+                $("#deskripsi").hide();
+                $("#nav-deskripsi").removeClass('active');
+                $("#nav-home").removeClass('active');
+                $("#nav-map").addClas('active');
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>
